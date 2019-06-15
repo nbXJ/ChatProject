@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.lang.*;
 import javax.swing.*;
 import java.awt.*;
-public class UI2 extends JFrame {
+public class RegisterFrame extends JFrame {
 
 
     private Client client;
@@ -65,7 +65,7 @@ public class UI2 extends JFrame {
                    String p = new String(password2.getPassword());
                    String n = name.getText();
                    client.sendCmd("RegistrationRequest!"+u+"!"+p+"!"+n);
-                   UI2.this.setVisible(false);
+                   RegisterFrame.this.setVisible(false);
 
                }
            });

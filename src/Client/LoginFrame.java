@@ -6,9 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.*;
 
-public class UI1 extends JFrame {
+public class LoginFrame extends JFrame {
     public static void main(String[] args) {
-        new UI1().createWindowLogin();
+        new LoginFrame().createWindowLogin();
 
     }
 
@@ -68,7 +68,7 @@ public class UI1 extends JFrame {
                 String response = client.readCmd();
                 if(response != null && response.equals("LoginGranted")){
                     //create new window
-                    UI1.this.setVisible(false);
+                    LoginFrame.this.setVisible(false);
                     System.out.println("Success");
 
                 }else{
@@ -88,8 +88,8 @@ public class UI1 extends JFrame {
         register.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            UI1.this.setVisible(false);
-            new UI2().createRegistration();
+            LoginFrame.this.setVisible(false);
+            new RegisterFrame().createRegistration();
 
             }
         });

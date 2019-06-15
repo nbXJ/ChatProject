@@ -4,7 +4,7 @@ import Client.Client;
 
 import javax.swing.*;
 
-public class UI3 extends JFrame {
+public class ChatFrame extends JFrame {
     private Client client;
     public void createChatroom(){
         this.setTitle("Chat room");
