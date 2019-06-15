@@ -4,13 +4,15 @@ import Server.Server;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 class User{
     private PrintWriter w;
     private Handler h;
     private Server server;
+	private Socket client;
 
-    private boolean isLogin;
+	public boolean isLogin;
     private final String username;
     private final String password;
     private final String nickname;
@@ -31,18 +33,24 @@ class User{
         w.flush();
     }
 
-    public void login(PrintWriter w, BufferedReader r, Server server){
+	public void login(Socket client, PrintWriter w, BufferedReader r, Server server) {
         isLogin = true;
+		this.client = client;
         this.w = w;
         this.server = server;
         h = new Handler(r, this, this.server);
         h.start();
-        System.out.println("Server.User Login: " + nickname);
+		server.sendAll("User Login: " + nickname);
+		System.out.println("User Login: " + nickname);
     }
 
     public void logOut() throws Exception{
+		isLogin = false;
         h.close();
         w.close();
+		client.close();
+		server.sendAll("User Logout: " + nickname);
+		System.out.println("User Logout: " + nickname);
     }
 
     public String getUsername() {

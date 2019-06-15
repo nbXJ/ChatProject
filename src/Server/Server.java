@@ -24,7 +24,7 @@ public class Server {
                 PrintWriter w = new PrintWriter(new OutputStreamWriter(s.getOutputStream()));
                 BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 //loginprocess thread to login
-                LoginProcess process = new LoginProcess(this, users, br, w, userFile);
+                LoginProcess process = new LoginProcess(s, this, users, br, w, userFile);
                 process.start();
 
             }
@@ -35,23 +35,28 @@ public class Server {
 
     public void sendAll(String msg){
         for(User u : users){
-            u.sendToUser(msg);
+            if (u.isLogin) {
+                u.sendToUser(msg);
+            }
         }
     }
 }
 
 class LoginProcess extends Thread{
     Server server;
+    Socket client;
     ArrayList<User> users;
     BufferedReader br;
     PrintWriter w;
     FileHandler f;
-    LoginProcess(Server server, ArrayList<User> users, BufferedReader br, PrintWriter w, FileHandler f){
+
+    LoginProcess(Socket client, Server server, ArrayList<User> users, BufferedReader br, PrintWriter w, FileHandler f) {
         this.server = server;
         this.br = br;
         this.w = w;
         this.users = users;
         this.f = f;
+        this.client = client;
     }
 
     @Override
@@ -60,6 +65,11 @@ class LoginProcess extends Thread{
             String line;
             while (true){
                 line = br.readLine().substring(2);
+                if (line.equals("CloseSocket")) {
+                    w.close();
+                    br.close();
+                    client.close();
+                }
                 String[] entry = line.split("!");
                 if(entry.length < 3){
                     w.println("*$GUN");
@@ -72,7 +82,7 @@ class LoginProcess extends Thread{
                     for (User u : users) {
                         if (u.getUsername().equals(user) &&
                                 u.getPassword().equals(pass)) {
-                            u.login(w, br, server);
+                            u.login(client, w, br, server);
                             w.println("*$LoginGranted");
                             w.flush();
                             this.stop();
@@ -86,7 +96,7 @@ class LoginProcess extends Thread{
                     System.out.println("User Registry: " + u + " " + p + " " + n);
                     f.addRegistry(u,p,n);
                     User user = new User(u, p, n);
-                    user.login(w, br, server);
+                    user.login(client, w, br, server);
                 }
             }
         }catch (Exception e){
@@ -115,6 +125,9 @@ class Handler extends Thread{
                 String msg = br.readLine();
                 if(msg.substring(0, 2).equals("*$")){
                     String cmd = msg.substring(2);
+                    if (cmd.equals("CloseSocket")) {
+                        user.logOut();
+                    }
                     continue;
                 }
                 server.sendAll(user.transformMsg(msg));
@@ -127,6 +140,6 @@ class Handler extends Thread{
 
     public void close() throws IOException{
         br.close();
-        this.stop();
+        running = false;
     }
 }
