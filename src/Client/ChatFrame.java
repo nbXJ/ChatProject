@@ -17,6 +17,8 @@ public class ChatFrame extends JFrame implements ActionListener, KeyListener {
 		this.setResizable(false);
 		this.add(mainPanel);
 		send.addActionListener(this);
+		textEntry.addKeyListener(new ChatFrame());
+		this.addKeyListener(new ChatFrame());
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {

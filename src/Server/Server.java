@@ -97,6 +97,7 @@ class LoginProcess extends Thread{
                     f.addRegistry(u,p,n);
                     User user = new User(u, p, n);
                     user.login(client, w, br, server);
+                    this.stop();
                 }
             }
         }catch (Exception e){

@@ -35,7 +35,7 @@ public class RegisterFrame extends JFrame {
 		panel.add(title);
 
 		JLabel user = new JLabel("Username:");
-		user.setBounds(60, 90, 90, 30);
+		user.setBounds(30, 90, 90, 30);
 		panel.add(user);
 
 		JTextField text = new JTextField(15);
