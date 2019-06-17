@@ -4,33 +4,32 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.lang.*;
 
-public class UI1 extends JFrame {
+public class LoginFrame extends JFrame {
     public static void main(String[] args) {
-        new UI1().createWindowLogin();
+        new LoginFrame().createWindowLogin();
 
     }
 
     private Client client;
-    private Frame frame;
-
-
-
-
 
     public void createWindowLogin(){
+        client = new Client().createSocket("127.0.0.1");
         this.setTitle("Chat Login");
         this.setSize(400, 400);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                client.closeSocket();
+                System.exit(0);
+            }
+        });
         components(new JPanel());
-        client = new Client().createSocket("127.0.0.1");
         this.setVisible(true);
     }
-
-
-
-
 
     private void components(JPanel panel){
         panel.setLayout(null);
@@ -68,12 +67,11 @@ public class UI1 extends JFrame {
                 String response = client.readCmd();
                 if(response != null && response.equals("LoginGranted")){
                     //create new window
-                    UI1.this.setVisible(false);
-                    System.out.println("Success");
-
+                    LoginFrame.this.setVisible(false);
+                    new ChatFrame().createChatFrame(client);
                 }else{
                     //open warning and clear the password field
-                    JOptionPane.showMessageDialog(frame,
+                    JOptionPane.showMessageDialog(LoginFrame.this,
                             "Incorrect username or password.",
                             "Warning!",
                             JOptionPane.WARNING_MESSAGE);
@@ -88,9 +86,8 @@ public class UI1 extends JFrame {
         register.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            UI1.this.setVisible(false);
-            new UI2().createRegistration();
-
+                LoginFrame.this.setVisible(false);
+                new RegisterFrame().createRegistration(client);
             }
         });
         panel.add(register);
